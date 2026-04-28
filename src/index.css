@@ -1,2 +1,128 @@
-@import 'geist/dist/fonts/geist-sans/style.css';
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'Geist Sans';
+  src: url('../node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+/* DESIGN TOKENS */
+@theme {
+    /* Neutrals */
+    --color-bg: oklch(0.978 0.003 247.858);
+    --color-surface: oklch(0.991 0 0);
+    --color-surface-raised: oklch(1 0 0);
+    --color-border: oklch(0 0 0 / 0.06);
+
+    /* Text colors*/
+    --color-text-primary: oklch(0.178 0 0);
+    --color-text-secondary: oklch(0.51 0 0);
+    --color-text-muted: oklch(0.683 0 0);
+    --color-text-disabled: oklch(0.792 0 0);
+    --color-text-inverted: oklch(1 0 0);
+
+    /* Semantic colors */
+    --color-link: oklch(0.559 0.182 254.675);
+    --color-error: oklch(0.661 0.191 23.945);
+
+    /* Interactive colors */
+    --color-black: oklch(0.178 0 0);
+    --color-black-hover: oklch(0.321 0 0);
+
+    /* Typography */
+    --text-xs: 12px;
+    --text-sm: 13px;
+    --text-base: 14px;
+    --text-md: 15px;
+    --text-lg: 18px;
+    --text-xxl: 32px;
+
+    /* Border radius */
+    --radius-sm: 6px;
+    --radius-xl: 18px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 1px oklch(0% 0 0 / 4%), 0 3px 6px -2px oklch(0% 0 0 / 2%);
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overscroll-behavior: none;
+  }
+
+  body {
+    font-family: 'Geist Sans', sans-serif;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: var(--color-text-primary);
+    background-color: var(--color-bg);
+    overscroll-behavior: none;
+  }
+
+  input, textarea, button, select {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    outline: none;
+    appearance: none;
+  }
+
+  button {
+    cursor: default;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ul, ol {
+    list-style: none;
+  }
+
+  img, svg {
+    display: block;
+  }
+
+  p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+  }
+
+  .btn-ghost:hover {
+    background-color: var(--color-bg);
+  }
+
+  .btn-send {
+    background: var(--color-black);
+  }
+
+  .btn-send:hover {
+    background: var(--color-black-hover);
+  }
+
+  .tooltip-popup {
+    background: var(--color-text-primary);
+    color: var(--color-text-inverted);
+    font-size: var(--text-xs);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+
+  .tooltip-popup[data-open] {
+    opacity: 1;
+  }
+}
