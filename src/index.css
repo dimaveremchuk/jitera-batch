@@ -25,6 +25,8 @@
     /* Semantic colors */
     --color-link: oklch(0.559 0.182 254.675);
     --color-error: oklch(0.661 0.191 23.945);
+    --color-accent-subtle: oklch(0.96 0.008 254);
+    --color-error-subtle: oklch(0.97 0.015 23.945);
 
     /* Interactive colors */
     --color-black: oklch(0.178 0 0);
@@ -99,6 +101,16 @@
     overflow-wrap: break-word;
   }
 
+  .field {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: border-color 150ms ease;
+  }
+
+  .field:focus-visible {
+    border-color: var(--color-text-muted);
+  }
+
   .btn-ghost:hover {
     background-color: var(--color-bg);
   }
@@ -124,5 +136,20 @@
 
   .tooltip-popup[data-open] {
     opacity: 1;
+  }
+
+  @keyframes spin-arc {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .executing-arc {
+    transform-origin: 8px 8px;
+    animation: spin-arc 0.4s linear infinite;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .executing-arc { animation: none; }
   }
 }
