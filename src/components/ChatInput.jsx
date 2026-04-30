@@ -47,6 +47,7 @@ const iconBtn = {
 
 const modelBtn = {
 	display: 'flex',
+	height: '28px',
 	alignItems: 'center',
 	gap: '4px',
 	fontSize: 'var(--text-sm)',
@@ -69,7 +70,10 @@ export default function ChatInput({ onSubmit }) {
 	const [value, setValue] = useState('')
 
 	function handleSend() {
-		if (value.trim()) onSubmit?.(value)
+		if (value.trim()) {
+			onSubmit?.(value)
+			setValue('')
+		}
 	}
 
 	return (

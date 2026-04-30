@@ -115,6 +115,15 @@
     background-color: var(--color-bg);
   }
 
+  .btn-secondary {
+    background-color: white;
+    transition: background-color 150ms ease;
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-bg);
+  }
+
   .btn-send {
     background: var(--color-black);
   }
@@ -135,6 +144,21 @@
   }
 
   .tooltip-popup[data-open] {
+    opacity: 1;
+  }
+
+  .tooltip-popup--error {
+    background: var(--color-text-primary);
+    color: var(--color-text-inverted);
+    font-size: var(--text-xs);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    max-width: 280px;
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+
+  .tooltip-popup--error[data-open] {
     opacity: 1;
   }
 
