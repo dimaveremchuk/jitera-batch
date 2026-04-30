@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import ChatInput from './components/ChatInput'
-import BatchModal from './components/BatchModal'
+import BatchModal, { FailedIcon } from './components/BatchModal'
 import BatchWidget from './components/BatchWidget'
+import ChatWidget from './components/ChatWidget'
 
 function AnimatedDots() {
 	const [count, setCount] = useState(1)
@@ -24,8 +25,11 @@ export default function App() {
 	const [totalDocs, setTotalDocs] = useState(200)
 	const [currentDocName, setCurrentDocName] = useState('')
 	const [isModalOpen, setIsModalOpen] = useState(false)
+	const [chatWidget, setChatWidget] = useState(null)
+	const [chatWidgetExpanded, setChatWidgetExpanded] = useState(false)
 
 	const batchActionsRef = useRef(null)
+	const pendingChatWidgetRef = useRef(null)
 
 	function handleSubmit(value) {
 		setUserMessage(value)
@@ -40,13 +44,25 @@ export default function App() {
 		}, 8000)
 	}
 
+	function handleBatchDone(data) {
+		if (!isModalOpen) {
+			setChatWidget(data)
+		} else {
+			pendingChatWidgetRef.current = data
+		}
+	}
+
 	function handleModalClose() {
+		if (executionPhase === 'done') {
+			setChatWidget(pendingChatWidgetRef.current)
+		}
 		setIsModalOpen(false)
 	}
 
-	const showWidget = chatPhase === 'modal' && !isModalOpen
+	const showWidget = chatPhase === 'modal' && !isModalOpen && !chatWidget
 
 	return (
+		<LayoutGroup>
 		<div className="min-h-screen bg-bg p-2 flex">
 			<div className="flex-1 bg-surface rounded-sm border border-border flex flex-col overflow-hidden">
 
@@ -111,6 +127,32 @@ export default function App() {
 											: agentMessage}
 									</motion.div>
 								</AnimatePresence>
+
+								<AnimatePresence>
+									{chatWidget && (
+										<motion.div
+											key="completion-msg"
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											transition={{ duration: 0.2 }}
+											style={{ color: 'var(--color-text-primary)', fontSize: 'var(--text-md)' }}
+										>
+											Done. Translated {chatWidget.successCount} out of {chatWidget.totalDocs} documents to Japanese. {chatWidget.failedCount} couldn't be processed — hover the <span style={{ display: 'inline-flex', verticalAlign: 'middle', color: 'var(--color-error)', margin: '0 1px' }}><FailedIcon /></span> icon on any failed row for details.
+										</motion.div>
+									)}
+								</AnimatePresence>
+
+								{chatWidget && (
+									<ChatWidget
+										successCount={chatWidget.successCount}
+										failedCount={chatWidget.failedCount}
+										totalDocs={chatWidget.totalDocs}
+										rows={chatWidget.rows}
+										expanded={chatWidgetExpanded}
+										onExpand={() => setChatWidgetExpanded(true)}
+										onCollapse={() => setChatWidgetExpanded(false)}
+									/>
+								)}
 							</div>
 						</motion.div>
 					)}
@@ -133,7 +175,7 @@ export default function App() {
 								totalDocs={totalDocs}
 								currentDocName={currentDocName}
 								onToggleExecution={() => batchActionsRef.current?.toggle()}
-								onExpand={() => setIsModalOpen(true)}
+								onExpand={() => { if (!chatWidget) setIsModalOpen(true) }}
 							/>
 						</motion.div>
 					)}
@@ -165,7 +207,7 @@ export default function App() {
 			</div>
 
 			<AnimatePresence>
-				{chatPhase === 'modal' && (
+				{chatPhase === 'modal' && !chatWidget && (
 					<BatchModal
 						onClose={handleModalClose}
 						executionPhase={executionPhase}
@@ -177,9 +219,11 @@ export default function App() {
 						onDocumentChange={setCurrentDocName}
 						batchActionsRef={batchActionsRef}
 						isModalOpen={isModalOpen}
+						onBatchDone={handleBatchDone}
 					/>
 				)}
 			</AnimatePresence>
 		</div>
+		</LayoutGroup>
 	)
 }

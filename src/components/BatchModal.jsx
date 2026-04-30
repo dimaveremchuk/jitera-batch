@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, memo } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Tooltip } from '@base-ui/react/tooltip'
+import BatchResultsTable from './BatchResultsTable'
 
 const DOC_NAMES = [
 	['API Reference', 'api-reference'],
@@ -74,7 +75,7 @@ export function ExecutingIcon() {
 	)
 }
 
-function CheckIcon() {
+export function CheckIcon() {
 	return (
 		<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path d="M4 8 L7 11 L12.5 5.5" stroke="currentColor" strokeOpacity="0.4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -82,7 +83,7 @@ function CheckIcon() {
 	)
 }
 
-function FailedIcon() {
+export function FailedIcon() {
 	return (
 		<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path d="M8 1C11.8658 1.00009 14.9998 4.13421 15 8C15 11.8659 11.8659 14.9999 8 15C4.13401 15 1 11.866 1 8C1.00018 4.13416 4.13412 1 8 1ZM8 2.5C4.96254 2.5 2.50018 4.96258 2.5 8C2.5 11.0376 4.96243 13.5 8 13.5C11.0375 13.4999 13.5 11.0375 13.5 8C13.4998 4.96264 11.0374 2.50009 8 2.5ZM8 9.5C8.55228 9.5 9 9.94772 9 10.5C9 11.0523 8.55228 11.5 8 11.5C7.44772 11.5 7 11.0523 7 10.5C7 9.94772 7.44772 9.5 8 9.5ZM8 4.25C8.41421 4.25 8.75 4.58579 8.75 5V7.5C8.75 7.91421 8.41421 8.25 8 8.25C7.58579 8.25 7.25 7.91421 7.25 7.5V5C7.25 4.58579 7.58579 4.25 8 4.25Z" fill="currentColor"/>
@@ -379,6 +380,7 @@ export default function BatchModal({
 	onDocumentChange,
 	batchActionsRef,
 	isModalOpen,
+	onBatchDone,
 }) {
 	const reduce = useReducedMotion()
 
@@ -396,6 +398,7 @@ export default function BatchModal({
 	const [populationKey, setPopulationKey] = useState(0)
 
 	const [copied, setCopied] = useState(false)
+	const [finalRows, setFinalRows] = useState(null)
 
 	// Refs
 	const timeoutRef = useRef(null)
@@ -413,6 +416,14 @@ export default function BatchModal({
 			if (index >= totalDocs) {
 				setExecutionPhase('done')
 				setCurrentlyExecuting(null)
+				const enrichedRows = ROWS.slice(0, totalDocs).map((row, r) => ({
+					...row,
+					status: failedIndicesRef.current.has(r) ? 'failed' : 'done',
+					error: failedIndicesRef.current.get(r) ?? null,
+				}))
+				const fc = [...failedIndicesRef.current.keys()].filter(r => r < totalDocs).length
+				setFinalRows(enrichedRows)
+				onBatchDone?.({ successCount: totalDocs - fc, failedCount: fc, totalDocs, rows: enrichedRows })
 			}
 			return
 		}
@@ -441,6 +452,14 @@ export default function BatchModal({
 				setCompletedCount(totalDocs)
 				setExecutionPhase('done')
 				setCurrentlyExecuting(null)
+				const enrichedRows = ROWS.slice(0, totalDocs).map((row, r) => ({
+					...row,
+					status: failedIndicesRef.current.has(r) ? 'failed' : 'done',
+					error: failedIndicesRef.current.get(r) ?? null,
+				}))
+				const fc = [...failedIndicesRef.current.keys()].filter(r => r < totalDocs).length
+				setFinalRows(enrichedRows)
+				onBatchDone?.({ successCount: totalDocs - fc, failedCount: fc, totalDocs, rows: enrichedRows })
 			} else {
 				setCompletedCount(c => c + 1)
 				processNextRowRef.current(index + 1)
@@ -588,6 +607,7 @@ export default function BatchModal({
 				{...panelAnim}
 				transition={transition}
 				exit={{ ...panelAnim.exit, transition: exitTransition }}
+				{...(executionPhase === 'done' ? { layoutId: 'batch-status' } : {})}
 			>
 				{/* Header */}
 				<div style={header}>
@@ -638,7 +658,17 @@ export default function BatchModal({
 					/>
 				</div>
 
-				{/* Documents */}
+				{/* Documents / Results */}
+				{executionPhase === 'done' && finalRows ? (
+					<div style={{ ...docsSection, paddingBottom: 20 }}>
+						<BatchResultsTable
+							rows={finalRows}
+							totalDocs={totalDocs}
+							successCount={completedCount - [...failedIndicesRef.current.keys()].filter(r => r < totalDocs).length}
+							failedCount={[...failedIndicesRef.current.keys()].filter(r => r < totalDocs).length}
+						/>
+					</div>
+				) : (<>
 				<div style={docsSection}>
 					<div style={docsHeader}>
 						<span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
@@ -849,6 +879,7 @@ export default function BatchModal({
 						)}
 					</AnimatePresence>
 				</div>
+				</>)}
 			</motion.div>
 		</motion.div>
 	)

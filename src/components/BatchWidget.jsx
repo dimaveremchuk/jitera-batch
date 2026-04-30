@@ -80,7 +80,7 @@ export default function BatchWidget({
 
 	return (
 		<Tooltip.Provider>
-			<div style={widgetStyle}>
+			<motion.div layoutId="batch-status" style={widgetStyle}>
 				{/* Left: status icon + label */}
 				<div style={leftStyle}>
 					<span style={{ display: 'flex', alignItems: 'center', flexShrink: 0, color: 'var(--color-text-secondary)' }}>
@@ -157,7 +157,7 @@ export default function BatchWidget({
 						</Tooltip.Portal>
 					</Tooltip.Root>
 				</div>
-			</div>
+			</motion.div>
 		</Tooltip.Provider>
 	)
 }
