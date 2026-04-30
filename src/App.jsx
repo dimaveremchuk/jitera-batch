@@ -20,6 +20,7 @@ export default function App() {
 	const [agentMessage, setAgentMessage] = useState('')
 
 	// Lifted batch state
+	const [batchModeActive, setBatchModeActive] = useState(false)
 	const [executionPhase, setExecutionPhase] = useState('idle')
 	const [completedCount, setCompletedCount] = useState(0)
 	const [totalDocs, setTotalDocs] = useState(200)
@@ -41,6 +42,7 @@ export default function App() {
 		setTimeout(() => {
 			setChatPhase('modal')
 			setIsModalOpen(true)
+			setBatchModeActive(true)
 		}, 8000)
 	}
 
@@ -199,7 +201,7 @@ export default function App() {
 						}),
 					}}
 				>
-					<ChatInput onSubmit={handleSubmit} />
+					<ChatInput onSubmit={handleSubmit} batchModeActive={batchModeActive} onBatchModeChange={setBatchModeActive} />
 				</motion.div>
 
 				{/* Bottom spacer: mirrors top spacer to complete vertical centering */}
