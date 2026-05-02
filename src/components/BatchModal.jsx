@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, memo } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Tooltip } from '@base-ui/react/tooltip'
 import BatchResultsTable from './BatchResultsTable'
+import MorphText from './MorphText'
 
 const DOC_NAMES = [
 	['API Reference', 'api-reference'],
@@ -765,54 +766,69 @@ export default function BatchModal({
 				{/* Footer */}
 				<div style={footer}>
 					<AnimatePresence mode="wait">
-						{executionPhase === 'idle' && (
+						{executionPhase !== 'done' && (
 							<motion.button
-								key="idle"
-								style={executeBtnStyle}
+								key="action"
+								layout
+								style={{
+									borderRadius: 'var(--radius-sm)',
+									fontSize: 'var(--text-sm)',
+									fontWeight: 500,
+									padding: '0 8px',
+									height: '28px',
+									cursor: 'default',
+									display: 'flex',
+									alignItems: 'center',
+									gap: '5px',
+									overflow: 'hidden',
+									borderWidth: '1px',
+									borderStyle: 'solid',
+								}}
 								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
+								animate={{
+									opacity: 1,
+									backgroundColor: executionPhase === 'idle' ? 'var(--color-black)' : 'rgba(0,0,0,0)',
+									color: executionPhase === 'idle' ? '#ffffff' : 'var(--color-text-primary)',
+									borderColor: executionPhase === 'idle' ? 'rgba(0,0,0,0)' : 'var(--color-border)',
+								}}
 								exit={{ opacity: 0 }}
-								transition={{ duration: 0.15 }}
-								onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-black-hover)')}
-								onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--color-black)')}
-								onClick={handleStart}
-								disabled={populationPhase !== 'done'}
+								transition={{
+									opacity: { duration: 0.15 },
+									layout: { duration: 0.15, ease: [0.165, 0.84, 0.44, 1] },
+									backgroundColor: { duration: 0.15 },
+									color: { duration: 0.15 },
+									borderColor: { duration: 0.15 },
+								}}
+								onClick={
+									executionPhase === 'idle' ? handleStart :
+									executionPhase === 'running' ? handlePause : handleResume
+								}
+								disabled={executionPhase === 'idle' && populationPhase !== 'done'}
+								onMouseEnter={(e) => {
+									if (executionPhase === 'idle') e.currentTarget.style.backgroundColor = 'var(--color-black-hover)'
+								}}
+								onMouseLeave={(e) => {
+									if (executionPhase === 'idle') e.currentTarget.style.backgroundColor = 'var(--color-black)'
+								}}
 							>
-								Execute batch
-							</motion.button>
-						)}
-						{(executionPhase === 'running' || executionPhase === 'paused') && (
-							<motion.button
-								key="pause-resume"
-								className="btn-secondary"
-								style={{ ...pauseResumeBtnStyle, overflow: 'hidden' }}
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								exit={{ opacity: 0 }}
-								transition={{ duration: 0.15 }}
-								onClick={executionPhase === 'running' ? handlePause : handleResume}
-							>
-								<MorphIcon mode={executionPhase === 'running' ? 'pause' : 'play'} />
-								{/* Hidden spacer drives button width; visible labels crossfade absolutely */}
-								<span style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-									<span style={{ opacity: 0, pointerEvents: 'none', whiteSpace: 'nowrap', userSelect: 'none' }}>
-										{executionPhase === 'running' ? 'Pause' : 'Resume'}
-									</span>
-									<motion.span
-										style={{ position: 'absolute', left: 0, whiteSpace: 'nowrap' }}
-										animate={{ opacity: executionPhase === 'running' ? 1 : 0, filter: executionPhase === 'running' ? 'blur(0px)' : 'blur(4px)' }}
-										transition={{ duration: 0.15 }}
-									>
-										Pause
-									</motion.span>
-									<motion.span
-										style={{ position: 'absolute', left: 0, whiteSpace: 'nowrap' }}
-										animate={{ opacity: executionPhase === 'paused' ? 1 : 0, filter: executionPhase === 'paused' ? 'blur(0px)' : 'blur(4px)' }}
-										transition={{ duration: 0.15 }}
-									>
-										Resume
-									</motion.span>
-								</span>
+								<AnimatePresence mode="popLayout" initial={false}>
+									{executionPhase !== 'idle' && (
+										<motion.span
+											key="icon"
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											exit={{ opacity: 0 }}
+											transition={{ duration: 0.15, ease: [0.165, 0.84, 0.44, 1] }}
+											style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}
+										>
+											<MorphIcon mode={executionPhase === 'running' ? 'pause' : 'play'} />
+										</motion.span>
+									)}
+								</AnimatePresence>
+								<MorphText text={
+									executionPhase === 'idle' ? 'Execute batch' :
+									executionPhase === 'running' ? 'Pause' : 'Resume'
+								} />
 							</motion.button>
 						)}
 						{executionPhase === 'done' && (
@@ -831,9 +847,9 @@ export default function BatchModal({
 									{copied ? (
 										<motion.span
 											key="check"
-											initial={{ opacity: 0, filter: 'blur(4px)' }}
-											animate={{ opacity: 1, filter: 'blur(0px)' }}
-											exit={{ opacity: 0, filter: 'blur(4px)' }}
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											exit={{ opacity: 0 }}
 											transition={{ duration: 0.15 }}
 											style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}
 										>
@@ -844,9 +860,9 @@ export default function BatchModal({
 									) : (
 										<motion.span
 											key="copy"
-											initial={{ opacity: 0, filter: 'blur(4px)' }}
-											animate={{ opacity: 1, filter: 'blur(0px)' }}
-											exit={{ opacity: 0, filter: 'blur(4px)' }}
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											exit={{ opacity: 0 }}
 											transition={{ duration: 0.15 }}
 											style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}
 										>
@@ -856,25 +872,7 @@ export default function BatchModal({
 										</motion.span>
 									)}
 								</AnimatePresence>
-								<span style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-									<span style={{ opacity: 0, pointerEvents: 'none', whiteSpace: 'nowrap', userSelect: 'none' }}>
-										{copied ? 'Copied' : 'Copy as CSV'}
-									</span>
-									<motion.span
-										style={{ position: 'absolute', left: 0, whiteSpace: 'nowrap' }}
-										animate={{ opacity: copied ? 0 : 1, filter: copied ? 'blur(4px)' : 'blur(0px)' }}
-										transition={{ duration: 0.15 }}
-									>
-										Copy as CSV
-									</motion.span>
-									<motion.span
-										style={{ position: 'absolute', left: 0, whiteSpace: 'nowrap' }}
-										animate={{ opacity: copied ? 1 : 0, filter: copied ? 'blur(0px)' : 'blur(4px)' }}
-										transition={{ duration: 0.15 }}
-									>
-										Copied
-									</motion.span>
-								</span>
+								<MorphText text={copied ? 'Copied' : 'Copy as CSV'} />
 							</motion.button>
 						)}
 					</AnimatePresence>

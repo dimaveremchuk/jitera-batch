@@ -1,6 +1,7 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Tooltip } from '@base-ui/react/tooltip'
 import { ClockIcon, PausedIcon, ExecutingIcon, MorphIcon } from './BatchModal'
+import MorphText from './MorphText'
 
 const widgetStyle = {
 	width: '680px',
@@ -22,12 +23,6 @@ const leftStyle = {
 	gap: '8px',
 	flex: 1,
 	minWidth: 0,
-}
-
-const textStyle = {
-	overflow: 'hidden',
-	textOverflow: 'ellipsis',
-	whiteSpace: 'nowrap',
 }
 
 const rightStyle = {
@@ -66,7 +61,10 @@ export default function BatchWidget({
 	onToggleExecution,
 	onExpand,
 }) {
-	const leftKey = executionPhase === 'running' ? `running-${currentDocName}` : executionPhase
+	const labelText =
+		executionPhase === 'running' ? `Translating ${currentDocName}...` :
+		executionPhase === 'paused'  ? 'Paused — Translate documents' :
+		                               'Translate documents'
 
 	const toggleTooltip =
 		executionPhase === 'running' ? 'Pause batch execution' :
@@ -86,26 +84,14 @@ export default function BatchWidget({
 					<span style={{ display: 'flex', alignItems: 'center', flexShrink: 0, color: 'var(--color-text-secondary)' }}>
 						{executionPhase === 'running' ? <ExecutingIcon /> : executionPhase === 'paused' ? <PausedIcon /> : <ClockIcon />}
 					</span>
-					<AnimatePresence mode="wait" initial={false}>
-						<motion.span
-							key={leftKey}
-							initial={{ opacity: 0, filter: 'blur(4px)' }}
-							animate={{ opacity: 1, filter: 'blur(0px)' }}
-							exit={{ opacity: 0, filter: 'blur(4px)' }}
-							transition={{ duration: 0.15 }}
-							style={{
-								...textStyle,
-								fontSize: 'var(--text-base)',
-								color: executionPhase === 'running' ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
-							}}
-						>
-							{executionPhase === 'running'
-								? `Translating ${currentDocName}...`
-								: executionPhase === 'paused'
-								? 'Paused — Translate documents'
-								: 'Translate documents'}
-						</motion.span>
-					</AnimatePresence>
+					<MorphText
+						text={labelText}
+						style={{
+							fontSize: 'var(--text-base)',
+							color: executionPhase === 'running' ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
+							overflow: 'hidden',
+						}}
+					/>
 				</div>
 
 				{/* Right: progress + toggle + expand */}
