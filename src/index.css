@@ -124,6 +124,14 @@
     background-color: var(--color-bg);
   }
 
+  .btn-icon-muted {
+    color: var(--color-text-muted);
+  }
+
+  .btn-icon-muted:hover {
+    color: var(--color-text-primary);
+  }
+
   .btn-secondary {
     background-color: white;
     transition: background-color 150ms ease;

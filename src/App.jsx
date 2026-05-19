@@ -139,7 +139,7 @@ export default function App() {
 											transition={{ duration: 0.2 }}
 											style={{ color: 'var(--color-text-primary)', fontSize: 'var(--text-md)' }}
 										>
-											Done. Translated {chatWidget.successCount} out of {chatWidget.totalDocs} documents to Japanese. {chatWidget.failedCount} couldn't be processed — hover the <span style={{ display: 'inline-flex', verticalAlign: 'middle', color: 'var(--color-error)', margin: '0 1px' }}><FailedIcon /></span> icon on any failed row for details.
+											Done. Translated {chatWidget.successCount} out of {chatWidget.totalDocs} documents to Japanese. {chatWidget.failedCount} couldn't be processed — hover the <span style={{ display: 'inline-flex', verticalAlign: 'middle', color: 'var(--color-text-muted)', margin: '0 1px' }}><FailedIcon /></span> icon on any failed row for details.
 										</motion.div>
 									)}
 								</AnimatePresence>

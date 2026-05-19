@@ -109,13 +109,18 @@ export default function ChatInput({ onSubmit, batchModeActive = false, onBatchMo
 				/>
 				<div style={bottomBar}>
 					<div style={leftGroup}>
-						<Menu.Root>
-							<Menu.Trigger render={<button style={iconBtn} className="btn-ghost" aria-label="Add files or tools" />}>
-								<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<path d="M8 2.75C8.41421 2.75 8.75 3.08579 8.75 3.5V7.25H12.5C12.9142 7.25 13.25 7.58579 13.25 8C13.2499 8.41416 12.9142 8.75 12.5 8.75H8.75V12.5C8.75 12.9142 8.41421 13.25 8 13.25C7.58581 13.25 7.25 12.9142 7.25 12.5V8.75H3.5C3.08588 8.74994 2.75006 8.41412 2.75 8C2.75 7.58583 3.08584 7.25006 3.5 7.25H7.25V3.5C7.25 3.0858 7.58581 2.75003 8 2.75Z" fill="black"/>
-								</svg>
-							</Menu.Trigger>
-							<Menu.Portal>
+						<Tooltip.Root>
+							<Menu.Root>
+								<Tooltip.Trigger
+									render={
+										<Menu.Trigger render={<button style={iconBtn} className="btn-ghost" aria-label="Add files or tools" />} />
+									}
+								>
+									<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M8 2.75C8.41421 2.75 8.75 3.08579 8.75 3.5V7.25H12.5C12.9142 7.25 13.25 7.58579 13.25 8C13.2499 8.41416 12.9142 8.75 12.5 8.75H8.75V12.5C8.75 12.9142 8.41421 13.25 8 13.25C7.58581 13.25 7.25 12.9142 7.25 12.5V8.75H3.5C3.08588 8.74994 2.75006 8.41412 2.75 8C2.75 7.58583 3.08584 7.25006 3.5 7.25H7.25V3.5C7.25 3.0858 7.58581 2.75003 8 2.75Z" fill="black"/>
+									</svg>
+								</Tooltip.Trigger>
+								<Menu.Portal>
 								<Menu.Positioner side="bottom" align="start" sideOffset={8}>
 									<Menu.Popup className="menu-popup">
 										<Tooltip.Root>
@@ -148,6 +153,12 @@ export default function ChatInput({ onSubmit, batchModeActive = false, onBatchMo
 								</Menu.Positioner>
 							</Menu.Portal>
 						</Menu.Root>
+						<Tooltip.Portal>
+							<Tooltip.Positioner sideOffset={4}>
+								<Tooltip.Popup className="tooltip-popup">Add files or tools</Tooltip.Popup>
+							</Tooltip.Positioner>
+						</Tooltip.Portal>
+					</Tooltip.Root>
 
 						<AnimatePresence>
 							{batchModeActive && (

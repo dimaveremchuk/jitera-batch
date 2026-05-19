@@ -616,7 +616,7 @@ export default function BatchModal({
 						{taskName}
 					</span>
 					<button
-						className="btn-ghost"
+						className="btn-ghost btn-icon-muted"
 						style={{
 							width: 28,
 							height: 28,
@@ -624,7 +624,6 @@ export default function BatchModal({
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
-							color: 'var(--color-text-muted)',
 							flexShrink: 0,
 						}}
 						onClick={onClose}
@@ -804,12 +803,7 @@ export default function BatchModal({
 									executionPhase === 'running' ? handlePause : handleResume
 								}
 								disabled={executionPhase === 'idle' && populationPhase !== 'done'}
-								onMouseEnter={(e) => {
-									if (executionPhase === 'idle') e.currentTarget.style.backgroundColor = 'var(--color-black-hover)'
-								}}
-								onMouseLeave={(e) => {
-									if (executionPhase === 'idle') e.currentTarget.style.backgroundColor = 'var(--color-black)'
-								}}
+								whileHover={executionPhase === 'idle' ? { backgroundColor: 'var(--color-black-hover)' } : undefined}
 							>
 								<AnimatePresence mode="popLayout" initial={false}>
 									{executionPhase !== 'idle' && (
@@ -843,14 +837,14 @@ export default function BatchModal({
 								transition={{ duration: 0.15, layout: { duration: 0.2, ease: [0.165, 0.84, 0.44, 1] } }}
 								onClick={handleCopy}
 							>
-								<AnimatePresence mode="wait">
+								<AnimatePresence mode="popLayout">
 									{copied ? (
 										<motion.span
 											key="check"
-											initial={{ opacity: 0 }}
-											animate={{ opacity: 1 }}
-											exit={{ opacity: 0 }}
-											transition={{ duration: 0.15 }}
+											initial={{ opacity: 0, filter: 'blur(4px)' }}
+											animate={{ opacity: 1, filter: 'blur(0px)' }}
+											exit={{ opacity: 0, filter: 'blur(4px)' }}
+											transition={{ duration: 0.12, ease: 'ease' }}
 											style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}
 										>
 											<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -860,10 +854,10 @@ export default function BatchModal({
 									) : (
 										<motion.span
 											key="copy"
-											initial={{ opacity: 0 }}
-											animate={{ opacity: 1 }}
-											exit={{ opacity: 0 }}
-											transition={{ duration: 0.15 }}
+											initial={{ opacity: 0, filter: 'blur(4px)' }}
+											animate={{ opacity: 1, filter: 'blur(0px)' }}
+											exit={{ opacity: 0, filter: 'blur(4px)' }}
+											transition={{ duration: 0.12, ease: 'ease' }}
 											style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}
 										>
 											<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

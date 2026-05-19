@@ -50,7 +50,6 @@ const expandBtnStyle = {
 	borderRadius: 'var(--radius-sm)',
 	justifyContent: 'center',
 	flexShrink: 0,
-	color: 'var(--color-text-muted)',
 }
 
 export default function BatchWidget({
@@ -88,7 +87,7 @@ export default function BatchWidget({
 						text={labelText}
 						style={{
 							fontSize: 'var(--text-base)',
-							color: executionPhase === 'running' ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
+							color: 'var(--color-text-primary)',
 							overflow: 'hidden',
 						}}
 					/>
@@ -127,7 +126,7 @@ export default function BatchWidget({
 						<Tooltip.Trigger render={
 							<button
 								style={expandBtnStyle}
-								className="btn-ghost"
+								className="btn-ghost btn-icon-muted"
 								onClick={onExpand}
 								aria-label="Expand"
 							/>

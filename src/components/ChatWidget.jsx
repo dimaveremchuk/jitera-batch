@@ -42,7 +42,6 @@ const iconBtnStyle = {
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'center',
-	color: 'var(--color-text-muted)',
 	flexShrink: 0,
 }
 
@@ -84,7 +83,7 @@ export default function ChatWidget({ successCount, failedCount, totalDocs, rows,
 				</div>
 
 				<button
-					className="btn-ghost"
+					className="btn-ghost btn-icon-muted"
 					style={iconBtnStyle}
 					onClick={expanded ? onCollapse : onExpand}
 					aria-label={expanded ? 'Close' : 'Expand'}
